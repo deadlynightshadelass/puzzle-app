@@ -105,19 +105,18 @@ body {
 .stat-k { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-soft); }
 .stat-v { font-size: 17px; font-variant-numeric: tabular-nums; color: var(--ink); }
 
-/* ---------- 2 player scoreboard ---------- */
-.scoreboard { display: flex; gap: 10px; margin-bottom: 8px; }
-.player {
-  flex: 1; display: flex; justify-content: space-between; align-items: center;
-  padding: 6px 12px 6px 10px; border-radius: 7px;
-  border: 1px solid var(--line); background: var(--panel);
-  border-left: 3px solid transparent;
-  opacity: .55; transition: opacity .2s ease, border-color .2s ease;
+/* ---------- whose turn it is (2 player only) ---------- */
+.turn-bar {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 14px; margin-bottom: 8px;
+  border: 1px solid var(--line); border-left: 3px solid var(--accent-2);
+  border-radius: 7px; background: var(--panel);
+  font-size: 14px; font-weight: 600;
 }
-.player.is-turn { opacity: 1; border-left-color: var(--accent-2); }
-.p-name { font-size: 12px; color: var(--ink-soft); }
-.player.is-turn .p-name { color: var(--ink); font-weight: 600; }
-.p-score { font-size: 18px; font-variant-numeric: tabular-nums; }
+.turn-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent-2); flex: none;
+}
 
 /* ---------- board ---------- */
 .board-wrap { position: relative; display: flex; justify-content: center; }
@@ -149,15 +148,18 @@ body {
   box-shadow: 0 8px 30px rgba(0,0,0,.6);
 }
 
-/* the win message */
+/* The win message. It sits at the bottom rather than across the middle:
+   seeing the picture you just finished IS the reward, so nothing covers it. */
 .win {
-  position: absolute; inset: 0; z-index: 300;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 6px; text-align: center; pointer-events: none;
-  background: rgba(0,0,0,.55); color: #fff; border-radius: 4px;
-  animation: fade .5s ease;
+  position: absolute; inset: auto 0 0 0; z-index: 300;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 2px; padding: 26px 16px 18px; text-align: center; pointer-events: none;
+  color: #fff; border-radius: 0 0 4px 4px;
+  background: linear-gradient(to top, rgba(0,0,0,.88), rgba(0,0,0,.72) 55%, transparent);
+  animation: fade .45s ease;
 }
-.win b { font-size: 30px; letter-spacing: .06em; }
+.win b { font-size: 26px; letter-spacing: .06em; }
+.win span { font-size: 14px; opacity: .9; }
 @keyframes fade { from { opacity: 0 } to { opacity: 1 } }
 
 /* ---------- controls ---------- */
@@ -183,7 +185,7 @@ body {
   }
   #boardWrap  { grid-column: 1; grid-row: 1 / span 3; }
   .hud        { grid-column: 2; grid-row: 1; margin-bottom: 14px; }
-  .scoreboard { grid-column: 2; grid-row: 2; margin-bottom: 14px; }
+  .turn-bar   { grid-column: 2; grid-row: 2; margin-bottom: 14px; }
   .controls   { grid-column: 2; grid-row: 3; margin-top: 0; }
 
   .hud { flex-direction: column; align-items: stretch; gap: 10px; }
@@ -191,7 +193,6 @@ body {
                aspect-ratio: 2 / 3; object-fit: cover; }
   .hud-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
 
-  .scoreboard { flex-direction: column; gap: 8px; }
   .controls { flex-direction: column; }
   .controls .btn { width: 100%; padding: 8px 14px; }
   .controls { gap: 8px; }

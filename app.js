@@ -46,7 +46,6 @@ const state = {
   timerId: null,
   solved: false,
   turn: 0,            // 0 = player 1, 1 = player 2
-  scores: [0, 0],
 };
 
 
@@ -256,7 +255,6 @@ function newGame() {
   state.moves = 0;
   state.solved = false;
   state.turn = 0;
-  state.scores = [0, 0];
 
   const n = g.cols * g.rows;
   board.innerHTML = '';
@@ -307,20 +305,13 @@ function onPieceClick(i) {
   }
 
   const other = state.pieces[state.picked];
-  const before = (other.slot === other.home ? 1 : 0) + (piece.slot === piece.home ? 1 : 0);
-
   const t = other.slot; other.slot = piece.slot; piece.slot = t;
-
-  const after = (other.slot === other.home ? 1 : 0) + (piece.slot === piece.home ? 1 : 0);
 
   other.el.classList.remove('is-picked');
   state.picked = null;
   state.moves++;
 
-  if (state.players === 2) {
-    state.scores[state.turn] += after - before;
-    state.turn = 1 - state.turn;
-  }
+  if (state.players === 2) state.turn = 1 - state.turn;
 
   layout(true);
   refreshHud();
@@ -351,13 +342,9 @@ function win() {
   clearInterval(state.timerId);
   const took = Date.now() - state.startedAt;
   $('statTime').textContent = mmss(took);
-  let line;
+  let line = 'Solved in ' + mmss(took) + ', ' + state.moves + ' moves';
 
-  if (state.players === 2) {
-    const a = state.scores[0], b = state.scores[1];
-    line = a === b ? 'A draw!' : 'Player ' + (a > b ? 1 : 2) + ' wins, ' + a + ' to ' + b;
-  } else {
-    line = 'Solved in ' + mmss(took) + ', ' + state.moves + ' moves';
+  if (state.players === 1) {
     const best = readBest();
     if (!best || took < best) {
       try { localStorage.setItem(bestKey(), String(took)); } catch (e) {}
@@ -391,11 +378,8 @@ function refreshHud() {
   $('statBest').textContent = best ? mmss(best) : '—';
   $('statBestWrap').hidden = state.players === 2;
 
-  $('scoreboard').hidden = state.players !== 2;
-  $('p1').classList.toggle('is-turn', state.turn === 0 && !state.solved);
-  $('p2').classList.toggle('is-turn', state.turn === 1 && !state.solved);
-  $('p1').querySelector('.p-score').textContent = state.scores[0];
-  $('p2').querySelector('.p-score').textContent = state.scores[1];
+  $('turnBar').hidden = state.players !== 2 || state.solved;
+  $('turnLabel').textContent = 'Player ' + (state.turn + 1);
 }
 
 function buildMenu() {
