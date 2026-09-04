@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jigsaw</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <h1 class="brand">Jigsaw</h1>
+  <button id="themeBtn" class="icon-btn" title="Light / dark mode" aria-label="Toggle light and dark mode">◐</button>
+</header>
+
+<!-- ============ MENU SCREEN ============ -->
+<main id="menu" class="screen">
+
+  <h2 class="step">1 &middot; Pick a picture</h2>
+  <div id="imageList" class="thumbs"></div>
+
+  <h2 class="step">2 &middot; Pick a difficulty</h2>
+  <div id="difficultyList" class="chips"></div>
+
+  <h2 class="step">3 &middot; Players</h2>
+  <div id="playerList" class="chips">
+    <button class="chip is-on" data-players="1">Solo</button>
+    <button class="chip" data-players="2">2 players (same device)</button>
+  </div>
+
+  <button id="startBtn" class="primary">Start puzzle</button>
+</main>
+
+<!-- ============ GAME SCREEN ============ -->
+<main id="game" class="screen" hidden>
+
+  <div class="hud">
+    <img id="hudThumb" class="hud-thumb" alt="Finished picture">
+    <div class="hud-stats">
+      <div class="stat"><span class="stat-k">Time</span><span class="stat-v" id="statTime">0:00</span></div>
+      <div class="stat"><span class="stat-k">Moves</span><span class="stat-v" id="statMoves">0</span></div>
+      <div class="stat"><span class="stat-k">Placed</span><span class="stat-v" id="statPlaced">0/0</span></div>
+      <div class="stat" id="statBestWrap"><span class="stat-k">Best</span><span class="stat-v" id="statBest">&mdash;</span></div>
+    </div>
+  </div>
+
+  <div id="scoreboard" class="scoreboard" hidden>
+    <div class="player" id="p1"><span class="p-name">Player 1</span><span class="p-score">0</span></div>
+    <div class="player" id="p2"><span class="p-name">Player 2</span><span class="p-score">0</span></div>
+  </div>
+
+  <div id="boardWrap" class="board-wrap">
+    <div id="board" class="board"></div>
+    <img id="peekImg" class="peek" alt="" hidden>
+    <div id="winBanner" class="win" hidden></div>
+  </div>
+
+  <div class="controls">
+    <button id="peekBtn" class="btn">Peek</button>
+    <button id="restartBtn" class="btn">Restart</button>
+    <button id="menuBtn" class="btn">New picture</button>
+  </div>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
