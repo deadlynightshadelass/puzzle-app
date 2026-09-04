@@ -167,10 +167,26 @@ function piecePath(row, col, cw, ch, m) {
 const board = $('board');
 const boardWrap = $('boardWrap');
 
+/* How big can the board be? Tabs stick out past the board on every side, so
+   the space a puzzle really occupies is bigger than the picture itself. That
+   overhang is 2 * m, and m is 0.28 of a cell, so the picture has to shrink by
+   0.56/rows vertically and 0.56/cols horizontally to leave room for it. */
 function boardSize() {
-  const availW = boardWrap.clientWidth || window.innerWidth - 36;
-  const availH = window.innerHeight - boardWrap.getBoundingClientRect().top - 110;
-  const h = clamp(Math.min(availH, availW / state.aspect), 240, 4000);
+  const rows = state.rows || 3, cols = state.cols || 2;
+  const availW = (boardWrap.clientWidth || window.innerWidth) - 20;
+
+  // on a wide screen the buttons sit beside the board, so only a small
+  // bottom gap is needed; stacked underneath they need much more
+  const wide = window.innerWidth >= 860;
+  const below = wide ? 26 : 86;
+  const availH = Math.max(window.innerHeight - boardWrap.getBoundingClientRect().top - below, 420);
+
+  // m is 0.28 of the LONGER cell side, and both cell sides scale with h,
+  // so the overhang is 0.28 * h * k on each side. That makes the total space
+  // used h * (1 + 0.56k) tall and h * (aspect + 0.56k) wide.
+  const k = Math.max(state.aspect / cols, 1 / rows);
+  const h = clamp(Math.min(availH / (1 + 0.56 * k),
+                           availW / (state.aspect + 0.56 * k)), 240, 4000);
   return { w: h * state.aspect, h };
 }
 
@@ -184,6 +200,9 @@ function layout(animate) {
   const cw = size.w / state.cols;
   const ch = size.h / state.rows;
   const m = 0.28 * Math.max(cw, ch);   // room for the tabs to stick out
+
+  // reserve that room around the board, so tabs never land on the buttons
+  board.style.margin = m + 'px';
 
   for (const p of state.pieces) {
     const homeR = Math.floor(p.home / state.cols), homeC = p.home % state.cols;
@@ -204,6 +223,11 @@ function layout(animate) {
 
     if (!animate) { void el.offsetWidth; el.classList.remove('no-anim'); }
   }
+
+  // keep the peek overlay exactly on top of the board
+  $('peekImg').style.width = size.w + 'px';
+  $('peekImg').style.height = size.h + 'px';
+
   markHomes();
 }
 
